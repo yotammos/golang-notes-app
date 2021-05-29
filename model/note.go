@@ -11,3 +11,12 @@ type Note struct {
 type CreateNoteRequest struct {
 	Message string `json:"message"`
 }
+
+type Response struct {
+	StatusCode int
+	Message    string
+}
+
+type Message struct {
+	Content string `json:"content"`
+}

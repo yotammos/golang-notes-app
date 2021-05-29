@@ -3,10 +3,9 @@ package dao
 import (
 	"notes-app/model"
 )
-import "notes-app/util"
 
 type NotesDao interface {
-	CreateNote(request model.CreateNoteRequest) *util.Response
-	DescribeNote(id string) (*util.Response, *model.Note)
-	ListNotes() (*util.Response, []string)
+	CreateNote(request model.CreateNoteRequest) *model.Response
+	DescribeNote(id string) (*model.Response, *model.Note)
+	ListNotes() (*model.Response, []string)
 }

@@ -3,8 +3,8 @@ package dao
 import (
 	"github.com/google/uuid"
 	"github.com/hashicorp/go-memdb"
+	"net/http"
 	"notes-app/model"
-	"notes-app/util"
 	"time"
 )
 
@@ -43,12 +43,12 @@ func (dao InMemoryDao) StartDb() error {
 	return nil
 }
 
-func (dao InMemoryDao) ListNotes() (*util.Response, []string) {
+func (dao InMemoryDao) ListNotes() (*model.Response, []string) {
 	transaction := dao.db.Txn(false)
 	iter, err := transaction.Get("note", "id")
 	if err != nil {
-		res := util.Response{
-			StatusCode: 500,
+		res := model.Response{
+			StatusCode: http.StatusInternalServerError,
 			Message:    "failed pulling from db",
 		}
 		return &res, nil
@@ -62,19 +62,19 @@ func (dao InMemoryDao) ListNotes() (*util.Response, []string) {
 	return nil, noteIds
 }
 
-func (dao InMemoryDao) DescribeNote(id string) (*util.Response, *model.Note) {
+func (dao InMemoryDao) DescribeNote(id string) (*model.Response, *model.Note) {
 	transaction := dao.db.Txn(false)
 	raw, err := transaction.First("note", "id", id)
 	if err != nil {
-		res := util.Response{
-			StatusCode: 500,
+		res := model.Response{
+			StatusCode: http.StatusInternalServerError,
 			Message:    "failed pulling from db",
 		}
 		return &res, nil
 	}
 	if raw == nil {
-		res := util.Response{
-			StatusCode: 404,
+		res := model.Response{
+			StatusCode: http.StatusNotFound,
 			Message:    "note not found",
 		}
 		return &res, nil
@@ -83,11 +83,11 @@ func (dao InMemoryDao) DescribeNote(id string) (*util.Response, *model.Note) {
 	return nil, &note
 }
 
-func (dao InMemoryDao) CreateNote(request model.CreateNoteRequest) *util.Response {
+func (dao InMemoryDao) CreateNote(request model.CreateNoteRequest) *model.Response {
 	uuidGenerator, uuidError := uuid.NewUUID()
 	if uuidError != nil {
-		return &util.Response{
-			StatusCode: 500,
+		return &model.Response{
+			StatusCode: http.StatusInternalServerError,
 			Message: "failed inserting into db",
 		}
 	}
@@ -101,13 +101,13 @@ func (dao InMemoryDao) CreateNote(request model.CreateNoteRequest) *util.Respons
 	err := transaction.Insert("note", note)
 	transaction.Commit()
 	if err != nil {
-		return &util.Response{
-			StatusCode: 500,
+		return &model.Response{
+			StatusCode: http.StatusInternalServerError,
 			Message: "failed inserting into db",
 		}
 	}
-	return &util.Response{
-		StatusCode: 200,
+	return &model.Response{
+		StatusCode: http.StatusOK,
 		Message: "created a note!",
 	}
 }

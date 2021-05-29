@@ -3,13 +3,12 @@ package service
 import (
 	"notes-app/dao"
 	"notes-app/model"
-	"notes-app/util"
 )
 
 type INotesService interface {
-	ListNotes() (*util.Response, []string)
-	DescribeNote(id string) (*util.Response, *model.Note)
-	CreateNote(request model.CreateNoteRequest) *util.Response
+	ListNotes() (*model.Response, []string)
+	DescribeNote(id string) (*model.Response, *model.Note)
+	CreateNote(request model.CreateNoteRequest) *model.Response
 }
 
 type NotesService struct {
@@ -23,14 +22,14 @@ func CreateService() NotesService {
 	}
 }
 
-func (service NotesService) ListNotes() (*util.Response, []string) {
+func (service NotesService) ListNotes() (*model.Response, []string) {
 	return service.database.ListNotes()
 }
 
-func (service NotesService) DescribeNote(id string) (*util.Response, *model.Note) {
+func (service NotesService) DescribeNote(id string) (*model.Response, *model.Note) {
 	return service.database.DescribeNote(id)
 }
 
-func (service NotesService) CreateNote(request model.CreateNoteRequest) *util.Response {
+func (service NotesService) CreateNote(request model.CreateNoteRequest) *model.Response {
 	return service.database.CreateNote(request)
 }
