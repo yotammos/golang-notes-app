@@ -30,6 +30,6 @@ func (service NotesService) DescribeNote(id string) (*model.Response, *model.Not
 	return service.database.DescribeNote(id)
 }
 
-func (service NotesService) CreateNote(request model.CreateNoteRequest) *model.Response {
+func (service NotesService) CreateNote(request model.CreateNoteRequest) (*model.Response, string) {
 	return service.database.CreateNote(request)
 }

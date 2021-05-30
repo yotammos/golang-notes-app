@@ -44,8 +44,15 @@ func createNote(c *gin.Context, notesService service.NotesService) (code int, ob
 		}
 	}
 
-	response := notesService.CreateNote(request)
-	return response.StatusCode, response.Message
+	res, noteId := notesService.CreateNote(request)
+	if res != nil {
+		return res.StatusCode, gin.H{
+			"message": res.Message,
+		}
+	}
+	return http.StatusOK, gin.H{
+		"noteId": noteId,
+	}
 }
 
 func describeNote(c *gin.Context, notesService service.NotesService) (code int, obj interface{}) {

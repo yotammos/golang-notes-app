@@ -83,17 +83,19 @@ func (dao InMemoryDao) DescribeNote(id string) (*model.Response, *model.Note) {
 	return nil, &note
 }
 
-func (dao InMemoryDao) CreateNote(request model.CreateNoteRequest) *model.Response {
+func (dao InMemoryDao) CreateNote(request model.CreateNoteRequest) (*model.Response, string) {
 	uuidGenerator, uuidError := uuid.NewUUID()
 	if uuidError != nil {
 		return &model.Response{
 			StatusCode: http.StatusInternalServerError,
 			Message: "failed inserting into db",
-		}
+		}, ""
 	}
 
+	noteId := uuidGenerator.String()
+
 	note := model.Note{
-		Id: uuidGenerator.String(),
+		Id: noteId,
 		Message: request.Message,
 		CreatedTimestamp: time.Now(),
 	}
@@ -104,11 +106,8 @@ func (dao InMemoryDao) CreateNote(request model.CreateNoteRequest) *model.Respon
 		return &model.Response{
 			StatusCode: http.StatusInternalServerError,
 			Message: "failed inserting into db",
-		}
+		}, ""
 	}
-	return &model.Response{
-		StatusCode: http.StatusOK,
-		Message: "created a note!",
-	}
+	return nil, noteId
 }
 
